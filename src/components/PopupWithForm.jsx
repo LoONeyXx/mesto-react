@@ -11,9 +11,7 @@ function PopupWithForm({ title, name, children, isOpen, onClose, submitText }) {
                 <h2 className="popup__title">
                     {title}
                 </h2>
-
                 <form
-                    noValidate
                     name={`popup-form-${name}`}
                     action="#"
                     className={`popup__form popup__form_type_${name}`}>

@@ -6,9 +6,7 @@ function Card({ card, onCardClick }) {
     }
 
     return (
-        <li
-            key={card._id}
-            className="cards__item scale-animation">
+        <li className="cards__item scale-animation">
             <button
                 className="button cards__delete-btn opacity no-highlight">
             </button>
