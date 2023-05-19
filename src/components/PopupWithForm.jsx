@@ -6,8 +6,7 @@ function PopupWithForm({ title, name, children, isOpen, onClose, submitText }) {
                 <button
                     onClick={onClose}
                     type="button"
-                    className="button popup__btn-close opacity no-highlight">
-                </button>
+                    className="button popup__btn-close opacity no-highlight" />
                 <h2 className="popup__title">
                     {title}
                 </h2>

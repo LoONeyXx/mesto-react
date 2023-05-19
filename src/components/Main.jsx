@@ -44,16 +44,14 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
                     <button
                         onClick={onEditProfile}
                         type="button"
-                        className="button profile__btn-edit opacity no-highlight">
-                    </button>
+                        className="button profile__btn-edit opacity no-highlight" />
                     <p className="profile__subtitle">{userDescription}
                     </p>
                 </div>
                 <button
                     onClick={onAddPlace}
                     type="button"
-                    className="button profile__btn-add opacity no-highlight">
-                </button>
+                    className="button profile__btn-add opacity no-highlight" />
             </section>
             <section className="cards">
                 <ul className="list cards__container">

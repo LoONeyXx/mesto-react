@@ -8,8 +8,7 @@ function Card({ card, onCardClick }) {
     return (
         <li className="cards__item scale-animation">
             <button
-                className="button cards__delete-btn opacity no-highlight">
-            </button>
+                className="button cards__delete-btn opacity no-highlight" />
             <div
                 onClick={handleClick}
                 style={{
@@ -17,13 +16,16 @@ function Card({ card, onCardClick }) {
                 }}
                 className="cards__image" />
             <div className="cards__title-zone">
-                <h2 className="cards__title">{card.name}</h2>
+                <h2 className="cards__title">
+                    {card.name}
+                </h2>
                 <div className="cards__like-zone">
                     <button
                         type="button"
-                        className="button cards__like-btn no-highlight">
-                    </button>
-                    <p className="cards__like-counter">{card.likes.length}</p>
+                        className="button cards__like-btn no-highlight" />
+                    <p className="cards__like-counter">
+                        {card.likes.length}
+                    </p>
                 </div>
             </div>
         </li>

@@ -7,13 +7,14 @@ function ImagePopup({ card, onClose }) {
                 <button
                     onClick={onClose}
                     type="button"
-                    className="button popup__btn-close popup__btn-close_type_image opacity no-highlight">
-                </button>
+                    className="button popup__btn-close popup__btn-close_type_image opacity no-highlight" />
                 <img
                     src={card.link}
                     alt={card.name}
                     className="popup__image" />
-                <figcaption className="popup__image-text">{card.name}</figcaption>
+                <figcaption className="popup__image-text">
+                    {card.name}
+                </figcaption>
             </figure>
         </section>
     )

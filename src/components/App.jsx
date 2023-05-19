@@ -54,15 +54,13 @@ function App() {
         onEditAvatar={handleEditAvataReactlick}
         onEditProfile={handleEditProfileClick}
         onAddPlace={handleAddPlaceClick}
-        onCardClick={handleCardClick}
-      />
+        onCardClick={handleCardClick} />
       <PopupWithForm
         name="edit-profile"
         title="Редактировать профиль"
         submitText="Сохранить"
         isOpen={isOpenEditProfilePopup}
         onClose={closeAllPopups} >
-
         <fieldset className="popup__input-group">
           <input
             minLength="2"
@@ -72,7 +70,7 @@ function App() {
             type="text"
             name="name"
             id="name" />
-          <span className="popup__input-error name-error"></span>
+          <span className="popup__input-error name-error" />
           <input
             minLength="2"
             maxLength="200"
@@ -81,7 +79,7 @@ function App() {
             type="text"
             name="about"
             id="about" />
-          <span className="popup__input-error about-error"></span>
+          <span className="popup__input-error about-error" />
         </fieldset>
       </PopupWithForm>
       <PopupWithForm
@@ -90,7 +88,6 @@ function App() {
         submitText='Сохранить'
         isOpen={isOpenEditAvatarPopup}
         onClose={closeAllPopups}>
-
         <fieldset className="popup__input-group">
           <input
             required
@@ -99,7 +96,7 @@ function App() {
             type="url"
             name="avatar"
             id="avatar" />
-          <span className="popup__input-error avatar-error"></span>
+          <span className="popup__input-error avatar-error" />
         </fieldset>
       </PopupWithForm>
       <PopupWithForm
@@ -118,7 +115,7 @@ function App() {
             type="text"
             name="name"
             id="title" />
-          <span className="popup__input-error title-error">1245</span>
+          <span className="popup__input-error title-error" />
           <input
             required
             placeholder='Ссылка на картинку'
@@ -126,15 +123,12 @@ function App() {
             type="url"
             name="link"
             id="link" />
-          <span className="popup__input-error link-error"></span>
+          <span className="popup__input-error link-error" />
         </fieldset>
       </PopupWithForm>
       <ImagePopup
         card={selectedCard}
         onClose={closeAllPopups} />
-
-
-
       <Footer />
     </div>
   );
