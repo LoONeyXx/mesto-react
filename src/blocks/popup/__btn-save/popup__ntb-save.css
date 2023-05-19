@@ -1,0 +1,31 @@
+.popup__btn-save {
+  font-family: "Inter", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  line-height: 21.78px;
+  width: 100%;
+  background-color: #000;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  border-radius: 2px;
+  transition: background-color 0.15s linear;
+  margin-top:13px;
+
+
+}
+
+@media (hover:hover) {
+  .popup__btn-save:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+}
+
+@media screen and (max-width: 980px) {
+  .popup__btn-save {
+    font-size: 14px;
+    line-height: 17px;
+    height: 46px;
+  }
+}

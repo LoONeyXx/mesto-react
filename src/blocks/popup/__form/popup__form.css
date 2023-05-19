@@ -1,0 +1,15 @@
+.popup__form {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  margin: 49px auto 0;
+}
+
+@media screen and (max-width: 980px) {
+  .popup__form {
+    gap: 45px;
+    margin-top: 75px;
+  }
+}
