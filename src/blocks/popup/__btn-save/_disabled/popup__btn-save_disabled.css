@@ -5,6 +5,7 @@
   opacity: 0.2;
   background-color: #fff;
   cursor:default;
+  pointer-events: none;
 }
 
 @media (hover:hover) {

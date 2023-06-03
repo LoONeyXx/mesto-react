@@ -1,11 +1,12 @@
-import logo from '../images/logo.svg'
+import logo from '../images/logo.svg';
+import React from 'react';
 
-function Header() {
+const Header = React.memo(function Header() {
     return (
-        <header className="header">
-            <img alt="Логотип MESTO RUSSIA" src={logo} className="logo" />
+        <header className='header'>
+            <img alt='Логотип MESTO RUSSIA' src={logo} className='logo' />
         </header>
-    )
-}
+    );
+});
 
-export default Header
+export default Header;

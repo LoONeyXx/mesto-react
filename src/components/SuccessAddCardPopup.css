@@ -1,0 +1,38 @@
+.success-card-popup {
+    position: fixed;
+    z-index: 5;
+    top: 20px;
+    right: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: scale(0);
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    color: rgb(250, 250, 250);
+    font-size: 24px;
+    text-align: center;
+
+}
+
+.success-card-popup_active {
+    transform: scale(1);
+
+
+
+}
+
+@media screen and (max-width: 767px) {
+    .success-card-popup {
+        font-size: 18px;
+        max-width: 200px;
+    }
+}
+
+
+@media screen and (max-width: 400px) {
+    .success-card-popup {
+        max-width: 150px;
+    }
+}
+

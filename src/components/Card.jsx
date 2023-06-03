@@ -1,35 +1,46 @@
-function Card({ card, onCardClick }) {
+import CurrentUserContext from '../contexts/CurrentUserContext';
+import React from 'react';
+const Card = React.memo(function Card({ card, onCardClick, onCardLike, onCardDelete }) {
+    const currentUser = React.useContext(CurrentUserContext);
+    const isOwn = currentUser._id === card.owner._id;
+    const isLiked = card.likes.some((user) => user._id === currentUser._id);
+    const cardLikeButtonClassName = `button cards__like-btn ${isLiked && 'cards__like-btn_active'} no-highlight`;
 
-
+    function handleClickDelete() {
+        onCardDelete(card);
+    }
     function handleClick() {
-        onCardClick(card)
+        onCardClick(card);
+    }
+    async function handleLikeClick() {
+        try {
+            onCardLike(card);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (
-        <li className="cards__item scale-animation">
-            <button
-                className="button cards__delete-btn opacity no-highlight" />
+        <li className='cards__item scale-animation'>
+            {isOwn && (
+                <button onClick={handleClickDelete} className='button cards__delete-btn opacity no-highlight' />
+            )}
             <div
                 onClick={handleClick}
                 style={{
-                    backgroundImage: `url(${card.link})`
+                    backgroundImage: `url(${card.link})`,
                 }}
-                className="cards__image" />
-            <div className="cards__title-zone">
-                <h2 className="cards__title">
-                    {card.name}
-                </h2>
-                <div className="cards__like-zone">
-                    <button
-                        type="button"
-                        className="button cards__like-btn no-highlight" />
-                    <p className="cards__like-counter">
-                        {card.likes.length}
-                    </p>
+                className='cards__image'
+            />
+            <div className='cards__title-zone'>
+                <h2 className='cards__title'>{card.name}</h2>
+                <div className='cards__like-zone'>
+                    <button onClick={handleLikeClick} type='button' className={cardLikeButtonClassName} />
+                    <p className='cards__like-counter'>{card.likes.length}</p>
                 </div>
             </div>
         </li>
-    )
-}
+    );
+});
 
-export default Card
+export default Card;
