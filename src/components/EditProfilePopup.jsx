@@ -2,25 +2,19 @@ import React from 'react';
 import PopupWithForm from './PopupWithForm';
 import CurrentUserContext from '../contexts/CurrentUserContext';
 
-const EditProfilePopup = React.memo(function EditProfilePopup({
-    isOpen,
-    onClose,
-    onUpdateUser,
-    onOverlayClick,
-    refPopup,
-}) {
+const EditProfilePopup = React.memo(function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
     const [user, setUser] = React.useState({ name: '', about: '' });
     const [isActiveErrors, setActiveErrors] = React.useState({ name: false, about: false });
-    const [errorMessages, setErrorMessages] = React.useState({ name: '', about: '' });
     const [isValidationInputs, setInputsValidation] = React.useState({ name: true, about: true });
+    const [errorMessages, setErrorMessages] = React.useState({ name: '', about: '' });
+    const [isValidForm, setValidForm] = React.useState(true);
     const [isLoading, setLoading] = React.useState(false);
 
-    const isValidForm = Object.values(isValidationInputs).every((input) => input);
     const currentUser = React.useContext(CurrentUserContext);
 
     React.useEffect(() => {
-        refPopup.current.addEventListener('click', onOverlayClick);
-    }, []);
+        setValidForm(Object.values(isValidationInputs).every((input) => input));
+    }, [isValidationInputs]);
 
     React.useEffect(() => {
         if (isOpen) {
@@ -70,9 +64,7 @@ const EditProfilePopup = React.memo(function EditProfilePopup({
             onSubmit={handleSubmit}
             isValid={isValidForm}
             isLoading={isLoading}
-            refPopup={refPopup}
             loadingText={'Сохранение...'}
-            onOverlayClick={onOverlayClick}
         >
             <fieldset className='popup__input-group'>
                 <input

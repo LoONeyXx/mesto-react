@@ -1,13 +1,17 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
 
-const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCard, onOverlayClick, refPopup }) {
+const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCard, refPopup }) {
     const [card, setCard] = React.useState({ name: '', link: '' });
     const [isActiveErrors, setActiveErrors] = React.useState({ name: false, link: false });
     const [errorMessages, setErrorMessages] = React.useState({ name: '', link: '' });
     const [isValidationInputs, setInputsValidation] = React.useState({ name: false, link: false });
     const [isLoading, setLoading] = React.useState(false);
-    const isValidForm = Object.values(isValidationInputs).every((input) => input);
+    const [isValidForm, setValidForm] = React.useState(false);
+
+    React.useEffect(() => {
+        setValidForm(Object.values(isValidationInputs).every((input) => input));
+    }, [isValidationInputs]);
 
     React.useEffect(() => {
         if (isOpen) {
@@ -58,7 +62,6 @@ const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCa
             isValid={isValidForm}
             isLoading={isLoading}
             loadingText={'Сохранение...'}
-            onOverlayClick={onOverlayClick}
             refPopup={refPopup}
         >
             <fieldset className='popup__input-group'>

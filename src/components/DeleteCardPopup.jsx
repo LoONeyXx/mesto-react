@@ -1,7 +1,7 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
 
-function DeleteCardPopup({ isOpen, onClose, cardToBeDeleted, onDeleteCard, refPopup }) {
+function DeleteCardPopup({ isOpen, onClose, cardToBeDeleted, onDeleteCard }) {
     const [isLoading, setLoading] = React.useState(false);
 
     async function handleSubmit(e) {
@@ -26,7 +26,6 @@ function DeleteCardPopup({ isOpen, onClose, cardToBeDeleted, onDeleteCard, refPo
             onSubmit={handleSubmit}
             isValid={true}
             loadingText={'Удаление...'}
-            refPopup={refPopup}
         />
     );
 }

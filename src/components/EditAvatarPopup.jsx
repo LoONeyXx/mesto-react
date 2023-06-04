@@ -1,18 +1,12 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
 
-const EditAvatarPopup = React.memo(function EditAvatarPopup({
-    isOpen,
-    onClose,
-    onUpdateAvatar,
-    onOverlayClick,
-    refPopup,
-}) {
+const EditAvatarPopup = React.memo(function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
     const [isActiveError, setActiveError] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState('');
     const [isValidForm, setValidityForm] = React.useState(false);
     const [isLoading, setLoading] = React.useState(false);
-
+    
     const refAvatar = React.useRef();
     React.useEffect(() => {
         if (isOpen) {
@@ -55,8 +49,6 @@ const EditAvatarPopup = React.memo(function EditAvatarPopup({
             isValid={isValidForm}
             isLoading={isLoading}
             loadingText={'Сохранение...'}
-            onOverlayClick={onOverlayClick}
-            refPopup={refPopup}
         >
             <fieldset className='popup__input-group'>
                 <input

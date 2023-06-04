@@ -1,13 +1,8 @@
 import React from 'react';
 
-const ImagePopup = React.memo(function ImagePopup({ card, onClose, onOverlayClick, refPopup }) {
+const ImagePopup = React.memo(function ImagePopup({ card, onClose }) {
     return (
-        <section
-            ref={refPopup}
-            onClick={onOverlayClick}
-            id='image'
-            className={`popup popup_type_image ${card.link ? 'popup_opened' : ''}`}
-        >
+        <section id='image' className={`popup popup_type_image ${card.link ? 'popup_opened' : ''}`}>
             <figure className='popup__figure'>
                 <button
                     onClick={onClose}

@@ -9,7 +9,7 @@ import CurrentUserContext from '../contexts/CurrentUserContext';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddCardPopup from './AddCardPopup';
-import SuccessAddCardPopup from './SuccessAddCardPopup';
+import SuccessPopup from './SuccessPopup';
 import Profile from './Profile';
 import DeleteCardPopup from './DeleteCardPopup';
 
@@ -26,21 +26,8 @@ function App() {
     const [currentUser, setCurrentUser] = React.useState({});
     const [isActiveSuccessPopup, setSuccessPopup] = React.useState(false);
     const [successMessage, setSuccessMessage] = React.useState('');
-    const isSomePopupOpened =
-        !!selectedCard.name ||
-        !!cardToBeDeleted ||
-        [isOpenAddCardPopup, isOpenEditAvatarPopup, isOpenEditProfilePopup].some((isOpen) => isOpen);
-
-    const refPopupProfileEdit = React.useRef();
-    const refPopupAddCard = React.useRef();
-    const refPopupAvatarEdit = React.useRef();
-    const refPopupImage = React.useRef();
-    const refPopupDeleteCard = React.useRef();
 
     React.useEffect(() => {
-        [refPopupProfileEdit, refPopupAddCard, refPopupAvatarEdit, refPopupImage, refPopupDeleteCard].forEach(
-            ({ current }) => current.addEventListener('click', handleOverlayClick)
-        );
         Promise.all([Api.getCardsInfo(), Api.getProfileInfo()])
             .then(([newCards, newInfo]) => {
                 setCurrentUser(newInfo);
@@ -49,19 +36,6 @@ function App() {
             .catch(console.error);
     }, []);
 
-    React.useEffect(() => {
-        isSomePopupOpened && window.addEventListener('keydown', handleEscapeClosePopup);
-    }, [isOpenAddCardPopup, isOpenEditAvatarPopup, isOpenEditProfilePopup, selectedCard.name, cardToBeDeleted]);
-
-    function handleEscapeClosePopup(e) {
-        e.key === 'Escape' && closeAllPopups();
-    }
-
-    function handleOverlayClick(e) {
-        if (e.target.classList.contains('popup_opened')) {
-            closeAllPopups();
-        }
-    }
     function startSuccessPopup(text) {
         setSuccessMessage(text);
         setSuccessPopup(true);
@@ -77,13 +51,12 @@ function App() {
     async function handleCardLike(card) {
         const isLiked = card.likes.some((user) => user._id === currentUser._id);
         try {
-            const response = await Api.changeLikeCardStatus(card._id, isLiked)
-            const newCard = await response
-            setCards((prev) => prev.map((prevCard) => (prevCard._id === card._id ? newCard : prevCard)))
-        }
-        catch(error) {
-            startErrorPopup()
-            throw error
+            const response = await Api.changeLikeCardStatus(card._id, isLiked);
+            const newCard = await response;
+            setCards((prev) => prev.map((prevCard) => (prevCard._id === card._id ? newCard : prevCard)));
+        } catch (error) {
+            startErrorPopup();
+            throw error;
         }
     }
     async function handleUpdateUser(user) {
@@ -133,12 +106,11 @@ function App() {
         }
     }
 
-    function closeAllPopups(e) {
+    async function closeAllPopups(e) {
         setEditProfilePopup(false);
         setEditAvatarPopup(false);
         setAddCardPopup(false);
         setSelectCard({ name: '', link: '' });
-        window.removeEventListener('keydown', handleEscapeClosePopup);
         setToBeDeletedCard('');
     }
 
@@ -180,37 +152,68 @@ function App() {
                 onUpdateUser={handleUpdateUser}
                 onClose={closeAllPopups}
                 isOpen={isOpenEditProfilePopup}
-                refPopup={refPopupProfileEdit}
             />
             <EditAvatarPopup
                 onUpdateAvatar={handleUpdateAvatar}
                 isOpen={isOpenEditAvatarPopup}
                 onClose={closeAllPopups}
-                refPopup={refPopupAvatarEdit}
             />
-            <AddCardPopup
-                onClose={closeAllPopups}
-                isOpen={isOpenAddCardPopup}
-                onAddCard={handleAddCard}
-                refPopup={refPopupAddCard}
-            />
+            <AddCardPopup onClose={closeAllPopups} isOpen={isOpenAddCardPopup} onAddCard={handleAddCard} />
             <DeleteCardPopup
                 onDeleteCard={handleDeleteCard}
                 isOpen={!!cardToBeDeleted}
                 onClose={closeAllPopups}
                 cardToBeDeleted={cardToBeDeleted}
-                refPopup={refPopupDeleteCard}
             />
-            <ImagePopup
-                refPopup={refPopupImage}
-                onOverlay={handleOverlayClick}
-                card={selectedCard}
-                onClose={closeAllPopups}
-            />
-            <SuccessAddCardPopup textSuccess={successMessage} isActive={isActiveSuccessPopup} />
+            <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+            <SuccessPopup textSuccess={successMessage} isActive={isActiveSuccessPopup} />
             <Footer />
         </CurrentUserContext.Provider>
     );
 }
 
 export default App;
+
+/**        Наброски на будущее */
+
+// const isSomePopupOpened =
+//     !!selectedCard.name ||
+//     !!cardToBeDeleted ||
+//     [isOpenAddCardPopup, isOpenEditAvatarPopup, isOpenEditProfilePopup].some((isOpen) => isOpen);
+
+// const refPopupProfileEdit = React.useRef();
+// const refPopupAddCard = React.useRef();
+// const refPopupAvatarEdit = React.useRef();
+// const refPopupImage = React.useRef();
+// const refPopupDeleteCard = React.useRef();
+
+// const setOverlaysClick = React.useCallback(() => {
+//     [refPopupProfileEdit, refPopupAddCard, refPopupAvatarEdit, refPopupImage, refPopupDeleteCard].forEach(
+//         ({ current }) =>
+//             current.addEventListener('click', (e) => {
+//                 if (e.target.classList.contains('popup_opened')) {
+//                     closeAllPopups();
+//                 }
+//             })
+//     );
+// },[]);
+// React.useEffect(() => {
+//     isSomePopupOpened && window.addEventListener('keydown', handleEscapeClosePopup);
+// }, [
+//     isOpenAddCardPopup,
+//     isOpenEditAvatarPopup,
+//     isOpenEditProfilePopup,
+//     selectedCard.name,
+//     cardToBeDeleted,
+//     isSomePopupOpened,
+// ]);
+
+// function handleEscapeClosePopup(e) {
+//     e.key === 'Escape' && closeAllPopups();
+// }
+
+// function handleOverlayClick(e) {
+//     if (e.target.classList.contains('popup_opened')) {
+//         closeAllPopups();
+//     }
+// }

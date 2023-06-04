@@ -10,19 +10,12 @@ const PopupWithForm = React.memo(function PopupWithForm({
     onSubmit,
     isValid,
     isLoading,
-    refPopup,
-    loadingText
-
+    loadingText,
 }) {
- 
     return (
-        <section ref={refPopup} className={`popup popup_type_${name} ${isOpen && 'popup_opened'}`}>
+        <section className={`popup popup_type_${name} ${isOpen && 'popup_opened'}`}>
             <div className={`popup__container`}>
-                <button
-                    onClick={onClose}
-                    type='button'
-                    className='button popup__btn-close opacity no-highlight'
-                />
+                <button onClick={onClose} type='button' className='button popup__btn-close opacity no-highlight' />
                 <h2 className='popup__title'>{title}</h2>
                 <form
                     noValidate

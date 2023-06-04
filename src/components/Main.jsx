@@ -1,12 +1,6 @@
 import React from 'react';
 import Card from './Card';
-const Main = React.memo(function Main({
-    onCardClick,
-    onCardLike,
-    onCardDelete,
-    cards,
-    children,
-}) {
+const Main = React.memo(function Main({ onCardClick, onCardLike, onCardDelete, cards, children }) {
     return (
         <main className='content'>
             {children}
