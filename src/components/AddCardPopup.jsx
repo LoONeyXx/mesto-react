@@ -3,20 +3,18 @@ import PopupWithForm from './PopupWithForm';
 
 const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCard, refPopup, isLoading }) {
     const [card, setCard] = React.useState({ name: '', link: '' });
-    const [isActiveErrors, setActiveErrors] = React.useState({ name: false, link: false });
     const [errorMessages, setErrorMessages] = React.useState({ name: '', link: '' });
     const [isValidationInputs, setInputsValidation] = React.useState({ name: false, link: false });
-    const [isValidForm, setValidForm] = React.useState(false);
 
-    React.useEffect(() => {
-        setValidForm(Object.values(isValidationInputs).every((input) => input));
-    }, [isValidationInputs]);
+    const isValidForm = React.useMemo(
+        () => Object.values(isValidationInputs).every((input) => input),
+        [isValidationInputs]
+    );
 
     React.useEffect(() => {
         if (isOpen) {
             setCard({ name: '', link: '' });
             setInputsValidation({ name: false, link: false });
-            setActiveErrors({ name: false, link: false });
         }
     }, [isOpen]);
 
@@ -27,13 +25,13 @@ const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCa
                 ...prev,
                 [e.target.name]: true,
             }));
-            setActiveErrors((prev) => ({ ...prev, [e.target.name]: false }));
+            setErrorMessages({ name: '', link: '' });
         } else {
             setInputsValidation((prev) => ({
                 ...prev,
                 [e.target.name]: false,
             }));
-            setActiveErrors((prev) => ({ ...prev, [e.target.name]: true }));
+
             setErrorMessages((prev) => ({ ...prev, [e.target.name]: e.target.validationMessage }));
         }
     }
@@ -71,7 +69,7 @@ const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCa
                 />
                 <span
                     className={`popup__input-error avatar-error ${
-                        isActiveErrors.name && 'popup__input-error_visible'
+                        errorMessages.name && 'popup__input-error_visible'
                     }`}
                 >
                     {errorMessages.name}
@@ -88,7 +86,7 @@ const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCa
                 />
                 <span
                     className={`popup__input-error avatar-error ${
-                        isActiveErrors.link && 'popup__input-error_visible'
+                        errorMessages.link && 'popup__input-error_visible'
                     }`}
                 >
                     {errorMessages.link}

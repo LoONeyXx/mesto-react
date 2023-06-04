@@ -2,7 +2,6 @@ import React from 'react';
 import PopupWithForm from './PopupWithForm';
 
 const EditAvatarPopup = React.memo(function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, isLoading }) {
-    const [isActiveError, setActiveError] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState('');
     const [isValidForm, setValidityForm] = React.useState(false);
 
@@ -10,7 +9,6 @@ const EditAvatarPopup = React.memo(function EditAvatarPopup({ isOpen, onClose, o
     React.useEffect(() => {
         if (isOpen) {
             refAvatar.current.value = '';
-            setActiveError(false);
             setValidityForm(false);
         }
     }, [isOpen]);
@@ -18,10 +16,8 @@ const EditAvatarPopup = React.memo(function EditAvatarPopup({ isOpen, onClose, o
     function handleChangeInput(e) {
         if (refAvatar.current.validity.valid) {
             setValidityForm(true);
-            setActiveError(false);
         } else {
             setValidityForm(false);
-            setActiveError(true);
             setErrorMessage(refAvatar.current.validationMessage);
         }
     }
@@ -56,7 +52,7 @@ const EditAvatarPopup = React.memo(function EditAvatarPopup({ isOpen, onClose, o
                 />
                 <span
                     className={`popup__input-error
-                        ${isActiveError && 'popup__input-error_visible'}`}
+                        ${errorMessage && 'popup__input-error_visible'}`}
                 >
                     {errorMessage}
                 </span>

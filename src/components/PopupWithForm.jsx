@@ -12,8 +12,14 @@ const PopupWithForm = React.memo(function PopupWithForm({
     isLoading,
     loadingMessage,
 }) {
+    const handleOverlayClick = React.useCallback((e) => {
+        if (e.target.classList.contains('popup_opened')) {
+            onClose();
+        }
+    }, []);
+
     return (
-        <section className={`popup popup_type_${name} ${isOpen && 'popup_opened'}`}>
+        <section onClick={handleOverlayClick} className={`popup popup_type_${name} ${isOpen && 'popup_opened'}`}>
             <div className={`popup__container`}>
                 <button onClick={onClose} type='button' className='button popup__btn-close opacity no-highlight' />
                 <h2 className='popup__title'>{title}</h2>

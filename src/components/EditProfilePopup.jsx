@@ -4,22 +4,20 @@ import CurrentUserContext from '../contexts/CurrentUserContext';
 
 const EditProfilePopup = React.memo(function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoading }) {
     const [user, setUser] = React.useState({ name: '', about: '' });
-    const [isActiveErrors, setActiveErrors] = React.useState({ name: false, about: false });
     const [isValidationInputs, setInputsValidation] = React.useState({ name: true, about: true });
     const [errorMessages, setErrorMessages] = React.useState({ name: '', about: '' });
-    const [isValidForm, setValidForm] = React.useState(true);
+    const isValidForm = React.useMemo(
+        () => Object.values(isValidationInputs).every((input) => input),
+        [isValidationInputs]
+    );
 
     const currentUser = React.useContext(CurrentUserContext);
 
     React.useEffect(() => {
-        setValidForm(Object.values(isValidationInputs).every((input) => input));
-    }, [isValidationInputs]);
-
-    React.useEffect(() => {
         if (isOpen) {
             setInputsValidation({ name: true, about: true });
-            setActiveErrors({ name: false, about: false });
             setUser(currentUser);
+            setErrorMessages({ name: '', about: '' });
         }
     }, [currentUser, isOpen]);
 
@@ -30,13 +28,13 @@ const EditProfilePopup = React.memo(function EditProfilePopup({ isOpen, onClose,
                 ...prev,
                 [e.target.name]: true,
             }));
-            setActiveErrors((prev) => ({ ...prev, [e.target.name]: false }));
+            setErrorMessages({ name: '', about: '' });
         } else {
             setInputsValidation((prev) => ({
                 ...prev,
                 name: false,
             }));
-            setActiveErrors((prev) => ({ ...prev, [e.target.name]: true }));
+
             setErrorMessages((prev) => ({ ...prev, [e.target.name]: e.target.validationMessage }));
         }
     }
@@ -70,7 +68,7 @@ const EditProfilePopup = React.memo(function EditProfilePopup({ isOpen, onClose,
                     value={user.name ?? ''}
                     onChange={handleChangeInput}
                 />
-                <span className={`popup__input-error ${isActiveErrors.name && 'popup__input-error_visible'}`}>
+                <span className={`popup__input-error ${errorMessages.name && 'popup__input-error_visible'}`}>
                     {errorMessages.name}
                 </span>
                 <input
@@ -84,7 +82,7 @@ const EditProfilePopup = React.memo(function EditProfilePopup({ isOpen, onClose,
                     value={user.about ?? ''}
                     onChange={handleChangeInput}
                 />
-                <span className={`popup__input-error ${isActiveErrors.about && 'popup__input-error_visible'}`}>
+                <span className={`popup__input-error ${errorMessages.about && 'popup__input-error_visible'}`}>
                     {errorMessages.about}
                 </span>
             </fieldset>

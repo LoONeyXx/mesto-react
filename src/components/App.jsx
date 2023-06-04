@@ -27,6 +27,27 @@ function App() {
     const [isActiveSuccessPopup, setSuccessPopup] = React.useState(false);
     const [successMessage, setSuccessMessage] = React.useState('');
     const [isLoading, setLoading] = React.useState(false);
+    const isSomePopupOpened = React.useMemo(
+        () =>
+            !!selectedCard.name ||
+            !!cardToBeDeleted ||
+            [isOpenAddCardPopup, isOpenEditAvatarPopup, isOpenEditProfilePopup].some((isOpen) => isOpen),
+        [isOpenAddCardPopup, selectedCard, isOpenEditAvatarPopup, isOpenEditProfilePopup, cardToBeDeleted]
+    );
+
+    const handleKeyEscape = React.useCallback((e) => {
+        if (e.key === 'Escape') {
+            closeAllPopups();
+        }
+    }, []);
+
+    React.useEffect(() => {
+        if (isSomePopupOpened) {
+            window.addEventListener('keydown', handleKeyEscape);
+        } else {
+            window.removeEventListener('keydown', handleKeyEscape);
+        }
+    }, [isSomePopupOpened, handleKeyEscape]);
 
     React.useEffect(() => {
         Promise.all([Api.getCardsInfo(), Api.getProfileInfo()])
@@ -144,6 +165,7 @@ function App() {
     function handleDeleteClick(card) {
         setToBeDeletedCard(card._id);
     }
+
     return (
         <CurrentUserContext.Provider value={currentUser}>
             <Header />
@@ -194,55 +216,3 @@ function App() {
 
 export default App;
 
-/**        Наброски на будущее */
-
-// const isSomePopupOpened =
-//     !!selectedCard.name ||
-//     !!cardToBeDeleted ||
-//     [isOpenAddCardPopup, isOpenEditAvatarPopup, isOpenEditProfilePopup].some((isOpen) => isOpen);
-
-// const refPopupProfileEdit = React.useRef();
-// const refPopupAddCard = React.useRef();
-// const refPopupAvatarEdit = React.useRef();
-// const refPopupImage = React.useRef();
-// const refPopupDeleteCard = React.useRef();
-
-// const setOverlaysClick = React.useCallback(() => {
-//     [refPopupProfileEdit, refPopupAddCard, refPopupAvatarEdit, refPopupImage, refPopupDeleteCard].forEach(
-//         ({ current }) =>
-//             current.addEventListener('click', (e) => {
-//                 if (e.target.classList.contains('popup_opened')) {
-//                     closeAllPopups();
-//                 }
-//             })
-//     );
-// },[]);
-// React.useEffect(() => {
-//     isSomePopupOpened && window.addEventListener('keydown', handleEscapeClosePopup);
-// }, [
-//     isOpenAddCardPopup,
-//     isOpenEditAvatarPopup,
-//     isOpenEditProfilePopup,
-//     selectedCard.name,
-//     cardToBeDeleted,
-//     isSomePopupOpened,
-// ]);
-
-// function handleEscapeClosePopup(e) {
-//     e.key === 'Escape' && closeAllPopups();
-// }
-
-// function handleOverlayClick(e) {
-//     if (e.target.classList.contains('popup_opened')) {
-//         closeAllPopups();
-//     }
-// }
-//  function validationForm(e) {
-//     if (e.currentTarget.checkValidity()) {
-//         setSubmitButtonText(true);
-//         setErrorMessages((prev) => ({ ...prev, [e.target.name]: '' }));
-//     } else {
-//         setSubmitButtonText(false);
-//         setErrorMessages((prev) => ({ ...prev, [e.target.name]: e.target.validationMessage }));
-//     }
-// }
