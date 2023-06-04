@@ -26,6 +26,7 @@ function App() {
     const [currentUser, setCurrentUser] = React.useState({});
     const [isActiveSuccessPopup, setSuccessPopup] = React.useState(false);
     const [successMessage, setSuccessMessage] = React.useState('');
+    const [isLoading, setLoading] = React.useState(false);
 
     React.useEffect(() => {
         Promise.all([Api.getCardsInfo(), Api.getProfileInfo()])
@@ -56,22 +57,26 @@ function App() {
             setCards((prev) => prev.map((prevCard) => (prevCard._id === card._id ? newCard : prevCard)));
         } catch (error) {
             startErrorPopup();
-            throw error;
+            console.error(error);
         }
     }
     async function handleUpdateUser(user) {
+        setLoading(true);
         try {
             const response = await Api.setProfileInfo(user);
             const newUserInfo = await response;
             setCurrentUser(newUserInfo);
             startSuccessPopup('Данные пользователя успешно обновлены');
+            closeAllPopups();
         } catch (error) {
             startErrorPopup();
-            throw error;
+            console.error(error);
         }
+        setLoading(false);
     }
 
     async function handleUpdateAvatar(info) {
+        setLoading(true);
         try {
             const response = await Api.setProfileAvatar(info);
             const newUserInfo = await response;
@@ -79,31 +84,38 @@ function App() {
             startSuccessPopup('Данные пользователя успешно обновлены');
         } catch (error) {
             startErrorPopup();
-            throw error;
+            console.error(error);
         }
+        setLoading(false);
     }
 
     async function handleAddCard(card) {
+        setLoading(true);
         try {
             const response = await Api.addNewCard(card);
             const newCard = await response;
             setCards((prev) => [newCard, ...prev]);
             startSuccessPopup('Карточка успешно добавлена');
+            closeAllPopups();
         } catch (error) {
             startErrorPopup();
-            throw error;
+            console.error(error);
         }
+        setLoading(false);
     }
 
     async function handleDeleteCard(id) {
+        setLoading(true);
         try {
             await Api.deleteCard(id);
             setCards((prevCards) => prevCards.filter((card) => card._id !== id));
             startSuccessPopup('Карточка успешно удалена');
+            closeAllPopups();
         } catch (error) {
             startErrorPopup();
-            throw error;
+            console.error(error);
         }
+        setLoading(false);
     }
 
     async function closeAllPopups(e) {
@@ -152,18 +164,26 @@ function App() {
                 onUpdateUser={handleUpdateUser}
                 onClose={closeAllPopups}
                 isOpen={isOpenEditProfilePopup}
+                isLoading={isLoading}
             />
             <EditAvatarPopup
                 onUpdateAvatar={handleUpdateAvatar}
                 isOpen={isOpenEditAvatarPopup}
                 onClose={closeAllPopups}
+                isLoading={isLoading}
             />
-            <AddCardPopup onClose={closeAllPopups} isOpen={isOpenAddCardPopup} onAddCard={handleAddCard} />
+            <AddCardPopup
+                isLoading={isLoading}
+                onClose={closeAllPopups}
+                isOpen={isOpenAddCardPopup}
+                onAddCard={handleAddCard}
+            />
             <DeleteCardPopup
                 onDeleteCard={handleDeleteCard}
                 isOpen={!!cardToBeDeleted}
                 onClose={closeAllPopups}
                 cardToBeDeleted={cardToBeDeleted}
+                isLoading={isLoading}
             />
             <ImagePopup card={selectedCard} onClose={closeAllPopups} />
             <SuccessPopup textSuccess={successMessage} isActive={isActiveSuccessPopup} />
@@ -215,5 +235,14 @@ export default App;
 // function handleOverlayClick(e) {
 //     if (e.target.classList.contains('popup_opened')) {
 //         closeAllPopups();
+//     }
+// }
+//  function validationForm(e) {
+//     if (e.currentTarget.checkValidity()) {
+//         setSubmitButtonText(true);
+//         setErrorMessages((prev) => ({ ...prev, [e.target.name]: '' }));
+//     } else {
+//         setSubmitButtonText(false);
+//         setErrorMessages((prev) => ({ ...prev, [e.target.name]: e.target.validationMessage }));
 //     }
 // }

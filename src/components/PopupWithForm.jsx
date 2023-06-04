@@ -10,7 +10,7 @@ const PopupWithForm = React.memo(function PopupWithForm({
     onSubmit,
     isValid,
     isLoading,
-    loadingText,
+    loadingMessage,
 }) {
     return (
         <section className={`popup popup_type_${name} ${isOpen && 'popup_opened'}`}>
@@ -32,7 +32,7 @@ const PopupWithForm = React.memo(function PopupWithForm({
                         type='submit'
                         disabled={!isValid}
                     >
-                        {isLoading ? loadingText : submitText}
+                        {isLoading ? loadingMessage : submitText}
                     </button>
                 </form>
             </div>

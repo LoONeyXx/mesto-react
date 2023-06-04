@@ -1,12 +1,11 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
 
-const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCard, refPopup }) {
+const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCard, refPopup, isLoading }) {
     const [card, setCard] = React.useState({ name: '', link: '' });
     const [isActiveErrors, setActiveErrors] = React.useState({ name: false, link: false });
     const [errorMessages, setErrorMessages] = React.useState({ name: '', link: '' });
     const [isValidationInputs, setInputsValidation] = React.useState({ name: false, link: false });
-    const [isLoading, setLoading] = React.useState(false);
     const [isValidForm, setValidForm] = React.useState(false);
 
     React.useEffect(() => {
@@ -39,18 +38,11 @@ const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCa
         }
     }
 
-    async function handleSubmit(e) {
-        setLoading(true);
+    function handleSubmit(e) {
         e.preventDefault();
-        try {
-            await onAddCard(card);
-            onClose();
-        } catch (error) {
-            console.error(error);
-        }
-
-        setLoading(false);
+        onAddCard(card);
     }
+
     return (
         <PopupWithForm
             name='add-card'
@@ -61,7 +53,7 @@ const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCa
             onSubmit={handleSubmit}
             isValid={isValidForm}
             isLoading={isLoading}
-            loadingText={'Сохранение...'}
+            loadingMessage={'Сохранение...'}
             refPopup={refPopup}
         >
             <fieldset className='popup__input-group'>

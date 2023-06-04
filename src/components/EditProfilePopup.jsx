@@ -2,13 +2,12 @@ import React from 'react';
 import PopupWithForm from './PopupWithForm';
 import CurrentUserContext from '../contexts/CurrentUserContext';
 
-const EditProfilePopup = React.memo(function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
+const EditProfilePopup = React.memo(function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoading }) {
     const [user, setUser] = React.useState({ name: '', about: '' });
     const [isActiveErrors, setActiveErrors] = React.useState({ name: false, about: false });
     const [isValidationInputs, setInputsValidation] = React.useState({ name: true, about: true });
     const [errorMessages, setErrorMessages] = React.useState({ name: '', about: '' });
     const [isValidForm, setValidForm] = React.useState(true);
-    const [isLoading, setLoading] = React.useState(false);
 
     const currentUser = React.useContext(CurrentUserContext);
 
@@ -42,16 +41,9 @@ const EditProfilePopup = React.memo(function EditProfilePopup({ isOpen, onClose,
         }
     }
 
-    async function handleSubmit(e) {
+    function handleSubmit(e) {
         e.preventDefault();
-        setLoading(true);
-        try {
-            await onUpdateUser({ name: user.name, about: user.about });
-            onClose();
-        } catch (error) {
-            console.error(error);
-        }
-        setLoading(false);
+        onUpdateUser({ name: user.name, about: user.about });
     }
 
     return (
@@ -64,7 +56,7 @@ const EditProfilePopup = React.memo(function EditProfilePopup({ isOpen, onClose,
             onSubmit={handleSubmit}
             isValid={isValidForm}
             isLoading={isLoading}
-            loadingText={'Сохранение...'}
+            loadingMessage={'Сохранение...'}
         >
             <fieldset className='popup__input-group'>
                 <input

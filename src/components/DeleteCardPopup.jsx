@@ -1,19 +1,10 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
 
-function DeleteCardPopup({ isOpen, onClose, cardToBeDeleted, onDeleteCard }) {
-    const [isLoading, setLoading] = React.useState(false);
-
-    async function handleSubmit(e) {
+function DeleteCardPopup({ isOpen, onClose, cardToBeDeleted, onDeleteCard, isLoading }) {
+    function handleSubmit(e) {
         e.preventDefault();
-        setLoading(true);
-        try {
-            await onDeleteCard(cardToBeDeleted);
-            onClose();
-        } catch (error) {
-            console.error(error);
-        }
-        setLoading(false);
+        onDeleteCard(cardToBeDeleted);
     }
     return (
         <PopupWithForm
@@ -25,7 +16,7 @@ function DeleteCardPopup({ isOpen, onClose, cardToBeDeleted, onDeleteCard }) {
             isOpen={isOpen}
             onSubmit={handleSubmit}
             isValid={true}
-            loadingText={'Удаление...'}
+            loadingMessage={'Удаление...'}
         />
     );
 }

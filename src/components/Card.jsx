@@ -12,12 +12,8 @@ const Card = React.memo(function Card({ card, onCardClick, onCardLike, onCardDel
     function handleClick() {
         onCardClick(card);
     }
-    async function handleLikeClick() {
-        try {
-            onCardLike(card);
-        } catch (error) {
-            console.error(error);
-        }
+    function handleLikeClick() {
+        onCardLike(card);
     }
 
     return (

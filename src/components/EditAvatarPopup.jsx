@@ -1,12 +1,11 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
 
-const EditAvatarPopup = React.memo(function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
+const EditAvatarPopup = React.memo(function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, isLoading }) {
     const [isActiveError, setActiveError] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState('');
     const [isValidForm, setValidityForm] = React.useState(false);
-    const [isLoading, setLoading] = React.useState(false);
-    
+
     const refAvatar = React.useRef();
     React.useEffect(() => {
         if (isOpen) {
@@ -15,6 +14,7 @@ const EditAvatarPopup = React.memo(function EditAvatarPopup({ isOpen, onClose, o
             setValidityForm(false);
         }
     }, [isOpen]);
+
     function handleChangeInput(e) {
         if (refAvatar.current.validity.valid) {
             setValidityForm(true);
@@ -26,16 +26,9 @@ const EditAvatarPopup = React.memo(function EditAvatarPopup({ isOpen, onClose, o
         }
     }
 
-    async function handleSumbit(e) {
-        setLoading(true);
+    function handleSumbit(e) {
         e.preventDefault();
-        try {
-            await onUpdateAvatar({ avatar: refAvatar.current.value });
-            onClose();
-        } catch (error) {
-            console.error(error);
-        }
-        setLoading(false);
+        onUpdateAvatar({ avatar: refAvatar.current.value });
     }
 
     return (
@@ -48,7 +41,7 @@ const EditAvatarPopup = React.memo(function EditAvatarPopup({ isOpen, onClose, o
             onSubmit={handleSumbit}
             isValid={isValidForm}
             isLoading={isLoading}
-            loadingText={'Сохранение...'}
+            loadingMessage={'Сохранение...'}
         >
             <fieldset className='popup__input-group'>
                 <input
