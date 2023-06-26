@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import '../index.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -12,8 +13,17 @@ import AddCardPopup from './AddCardPopup';
 import SuccessPopup from './SuccessPopup';
 import Profile from './Profile';
 import DeleteCardPopup from './DeleteCardPopup';
+import successLogo from '../images/success.svg';
+import errorLogo from '../images/error.svg';
+import Register from './Register';
+import Login from './Login';
+import InfoTooltip from './InfoTooltip';
+import ProtectedRouteElement from './ProtectedRoute';
+import { auth } from '../utils/Auth';
 
 function App() {
+    const [loggedIn, setLogin] = React.useState(false);
+
     const [isOpenEditProfilePopup, setEditProfilePopup] = React.useState(false);
     const [isOpenEditAvatarPopup, setEditAvatarPopup] = React.useState(false);
     const [isOpenAddCardPopup, setAddCardPopup] = React.useState(false);
@@ -34,6 +44,9 @@ function App() {
             [isOpenAddCardPopup, isOpenEditAvatarPopup, isOpenEditProfilePopup].some((isOpen) => isOpen),
         [isOpenAddCardPopup, selectedCard, isOpenEditAvatarPopup, isOpenEditProfilePopup, cardToBeDeleted]
     );
+    const [toolTip, setToolTip] = React.useState({});
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const handleKeyEscape = React.useCallback((e) => {
         if (e.key === 'Escape') {
@@ -44,19 +57,11 @@ function App() {
     React.useEffect(() => {
         if (isSomePopupOpened) {
             window.addEventListener('keydown', handleKeyEscape);
-        } else {
-            window.removeEventListener('keydown', handleKeyEscape);
         }
+        return () => {
+            window.removeEventListener('keydown', handleKeyEscape);
+        };
     }, [isSomePopupOpened, handleKeyEscape]);
-
-    React.useEffect(() => {
-        Promise.all([Api.getCardsInfo(), Api.getProfileInfo()])
-            .then(([newCards, newInfo]) => {
-                setCurrentUser(newInfo);
-                setCards(newCards);
-            })
-            .catch(console.error);
-    }, []);
 
     function startSuccessPopup(text) {
         setSuccessMessage(text);
@@ -103,6 +108,7 @@ function App() {
             const newUserInfo = await response;
             setCurrentUser(newUserInfo);
             startSuccessPopup('Данные пользователя успешно обновлены');
+            closeAllPopups();
         } catch (error) {
             startErrorPopup();
             console.error(error);
@@ -139,12 +145,73 @@ function App() {
         setLoading(false);
     }
 
-    async function closeAllPopups(e) {
+    async function handleRegistartion(info) {
+        try {
+            const response = await auth.registration(info);
+            const data = await response;
+            navigate('/sign-in', { replace: true });
+            setToolTip({ name: 'Вы успешно зарегистрировались!', link: successLogo });
+            return data;
+        } catch (error) {
+            console.error(error);
+            setToolTip({ name: 'Что-то пошло не так! Попробуйте ещё раз.', link: errorLogo });
+        }
+    }
+
+    function handleExit() {
+        setLogin(false);
+        localStorage.removeItem('token');
+        setCurrentUser({});
+    }
+    async function startRender() {
+        const newCards = await Api.getCardsInfo();
+        const newInfo = await Api.getProfileInfo();
+        setCurrentUser((prev) => ({ ...prev, ...newInfo }));
+        setCards(newCards);
+    }
+
+    useEffect(() => {
+        if (loggedIn) {
+            startRender();
+        }
+    }, [loggedIn]);
+
+    const validationUser = React.useCallback(
+        async (token) => {
+            try {
+                const responce = await auth.validation(token);
+                const email = responce.data.email;
+                setCurrentUser((prev) => ({ ...prev, email: email }));
+                navigate('/', { replace: true });
+                setLogin(true);
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        [navigate]
+    );
+
+    useEffect(() => {
+        localStorage.token && validationUser(localStorage.token);
+    }, [validationUser]);
+    async function handleAuthorization(info) {
+        try {
+            const responce = await auth.authorization(info);
+            const data = await responce;
+            validationUser(data.token);
+            localStorage.setItem('token', data.token);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function closeAllPopups(e) {
         setEditProfilePopup(false);
         setEditAvatarPopup(false);
         setAddCardPopup(false);
         setSelectCard({ name: '', link: '' });
         setToBeDeletedCard('');
+        setToolTip({ name: '', link: '' });
     }
 
     function handleEditAvatarClick() {
@@ -168,20 +235,56 @@ function App() {
 
     return (
         <CurrentUserContext.Provider value={currentUser}>
-            <Header />
-            <Main
-                closeAllPopups={closeAllPopups}
-                onCardClick={handleCardClick}
-                onCardLike={handleCardLike}
-                onCardDelete={handleDeleteClick}
-                cards={cards}
-            >
-                <Profile
-                    onEditAvatar={handleEditAvatarClick}
-                    onEditProfile={handleEditProfileClick}
-                    onAddPlace={handleAddPlaceClick}
-                />
-            </Main>
+            <Header
+                onExit={handleExit}
+                location={location}
+            />
+
+            <Routes>
+                <Route
+                    path='/'
+                    element={
+                        <ProtectedRouteElement
+                            loggedIn={loggedIn}
+                            element={
+                                <Main
+                                    closeAllPopups={closeAllPopups}
+                                    onCardClick={handleCardClick}
+                                    onCardLike={handleCardLike}
+                                    onCardDelete={handleDeleteClick}
+                                    cards={cards}
+                                >
+                                    <Profile
+                                        onEditAvatar={handleEditAvatarClick}
+                                        onEditProfile={handleEditProfileClick}
+                                        onAddPlace={handleAddPlaceClick}
+                                    />
+                                </Main>
+                            }
+                        />
+                    }
+                ></Route>
+
+                {!loggedIn && (
+                    <Route
+                        path='/sign-up'
+                        element={<Register onSubmit={handleRegistartion} />}
+                    />
+                )}
+                {!loggedIn && (
+                    <Route
+                        path='/sign-in'
+                        element={<Login onSubmit={handleAuthorization} />}
+                    />
+                )}
+            </Routes>
+
+            <InfoTooltip
+                name={toolTip.name}
+                onClose={closeAllPopups}
+                logo={toolTip.link}
+            />
+
             <EditProfilePopup
                 onUpdateUser={handleUpdateUser}
                 onClose={closeAllPopups}
@@ -207,12 +310,17 @@ function App() {
                 cardToBeDeleted={cardToBeDeleted}
                 isLoading={isLoading}
             />
-            <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-            <SuccessPopup textSuccess={successMessage} isActive={isActiveSuccessPopup} />
-            <Footer />
+            <ImagePopup
+                card={selectedCard}
+                onClose={closeAllPopups}
+            />
+            <SuccessPopup
+                textSuccess={successMessage}
+                isActive={isActiveSuccessPopup}
+            />
+            {loggedIn && <Footer />}
         </CurrentUserContext.Provider>
     );
 }
 
 export default App;
-

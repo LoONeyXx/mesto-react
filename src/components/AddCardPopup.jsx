@@ -1,44 +1,31 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
-
+import { useForm } from '../hooks/useForm';
 const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCard, refPopup, isLoading }) {
-    const [card, setCard] = React.useState({ name: '', link: '' });
-    const [errorMessages, setErrorMessages] = React.useState({ name: '', link: '' });
-    const [isValidationInputs, setInputsValidation] = React.useState({ name: false, link: false });
-
-    const isValidForm = React.useMemo(
-        () => Object.values(isValidationInputs).every((input) => input),
-        [isValidationInputs]
-    );
-
+    const {
+        values,
+        isValid,
+        errorMessages,
+        handleChangeForm,
+        handleChangeInput,
+        setErrorMessages,
+        setValues,
+        setValid,
+    } = useForm({
+        name: '',
+        link: '',
+    });
     React.useEffect(() => {
         if (isOpen) {
-            setCard({ name: '', link: '' });
-            setInputsValidation({ name: false, link: false });
+            setValues({ name: '', link: '' });
+            setValid(false);
+            setErrorMessages({});
         }
-    }, [isOpen]);
-
-    function handleChangeInput(e) {
-        setCard((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-        if (e.target.validity.valid) {
-            setInputsValidation((prev) => ({
-                ...prev,
-                [e.target.name]: true,
-            }));
-            setErrorMessages({ name: '', link: '' });
-        } else {
-            setInputsValidation((prev) => ({
-                ...prev,
-                [e.target.name]: false,
-            }));
-
-            setErrorMessages((prev) => ({ ...prev, [e.target.name]: e.target.validationMessage }));
-        }
-    }
+    }, [isOpen, setErrorMessages, setValid, setValues]);
 
     function handleSubmit(e) {
         e.preventDefault();
-        onAddCard(card);
+        onAddCard(values);
     }
 
     return (
@@ -49,13 +36,16 @@ const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCa
             isOpen={isOpen}
             onClose={onClose}
             onSubmit={handleSubmit}
-            isValid={isValidForm}
+            isValid={isValid}
             isLoading={isLoading}
             loadingMessage={'Сохранение...'}
             refPopup={refPopup}
+            onChange={handleChangeForm}
         >
             <fieldset className='popup__input-group'>
                 <input
+                    value={values.name}
+                    onChange={handleChangeInput}
                     minLength='2'
                     maxLength='30'
                     required
@@ -64,8 +54,6 @@ const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCa
                     type='text'
                     name='name'
                     id='title'
-                    value={card.name ?? ''}
-                    onChange={handleChangeInput}
                 />
                 <span
                     className={`popup__input-error avatar-error ${
@@ -75,14 +63,14 @@ const AddCardPopup = React.memo(function AddCardPopup({ isOpen, onClose, onAddCa
                     {errorMessages.name}
                 </span>
                 <input
+                    value={values.link}
+                    onChange={handleChangeInput}
                     required
                     placeholder='Ссылка на картинку'
                     className='popup__input popup__input_type_card-link no-highlight'
                     type='url'
                     name='link'
                     id='link'
-                    value={card.link ?? ''}
-                    onChange={handleChangeInput}
                 />
                 <span
                     className={`popup__input-error avatar-error ${

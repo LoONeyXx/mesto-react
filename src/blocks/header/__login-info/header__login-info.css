@@ -1,0 +1,11 @@
+.header__login-info {
+    display: flex;
+    gap:24px;
+}
+
+
+@media screen and (max-width:767px) {
+    .header__login-info {
+        display: none;
+    }
+}

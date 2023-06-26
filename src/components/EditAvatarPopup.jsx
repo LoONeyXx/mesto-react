@@ -1,32 +1,32 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
-
+import { useForm } from '../hooks/useForm';
 const EditAvatarPopup = React.memo(function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, isLoading }) {
-    const [errorMessage, setErrorMessage] = React.useState('');
-    const [isValidForm, setValidityForm] = React.useState(false);
-
-    const refAvatar = React.useRef();
-    React.useEffect(() => {
-        if (isOpen) {
-            refAvatar.current.value = '';
-            setValidityForm(false);
-        }
-    }, [isOpen]);
-
-    function handleChangeInput(e) {
-        if (refAvatar.current.validity.valid) {
-            setValidityForm(true);
-        } else {
-            setValidityForm(false);
-            setErrorMessage(refAvatar.current.validationMessage);
-        }
-    }
+    const {
+        values,
+        isValid,
+        errorMessages,
+        handleChangeForm,
+        handleChangeInput,
+        setErrorMessages,
+        setValues,
+        setValid,
+    } = useForm({
+        avatar: '',
+    });
 
     function handleSumbit(e) {
         e.preventDefault();
-        onUpdateAvatar({ avatar: refAvatar.current.value });
+        onUpdateAvatar({ avatar: values.avatar });
     }
 
+    React.useEffect(() => {
+        if (isOpen) {
+            setValues({ avatar: '' });
+            setValid(false);
+            setErrorMessages({});
+        }
+    }, [isOpen, setValid, setValues, setErrorMessages]);
     return (
         <PopupWithForm
             name='avatar-profile'
@@ -35,26 +35,27 @@ const EditAvatarPopup = React.memo(function EditAvatarPopup({ isOpen, onClose, o
             isOpen={isOpen}
             onClose={onClose}
             onSubmit={handleSumbit}
-            isValid={isValidForm}
+            isValid={isValid}
             isLoading={isLoading}
             loadingMessage={'Сохранение...'}
+            onChange={handleChangeForm}
         >
             <fieldset className='popup__input-group'>
                 <input
+                    value={values.avatar}
+                    onChange={handleChangeInput}
                     required
                     placeholder='Добавьте ссылку на картинку'
                     className='popup__input popup__input_type_avatar-profile no-highlight'
                     type='url'
                     name='avatar'
                     id='avatar'
-                    ref={refAvatar}
-                    onChange={handleChangeInput}
                 />
                 <span
                     className={`popup__input-error
-                        ${errorMessage && 'popup__input-error_visible'}`}
+                        ${errorMessages.avatar && 'popup__input-error_visible'}`}
                 >
-                    {errorMessage}
+                    {errorMessages.avatar}
                 </span>
             </fieldset>
         </PopupWithForm>
